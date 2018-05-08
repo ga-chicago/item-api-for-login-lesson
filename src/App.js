@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 import ItemList from './ItemList';
 import CreateItem from './CreateItem';
+import EditModal from './EditModal';
 
 class App extends Component {
   constructor() {
@@ -66,6 +67,7 @@ class App extends Component {
       <div className="App">
         <ItemList items={this.state.items} deleteItem={this.deleteItem} />
         <CreateItem addItem={this.addItem} />
+        <EditModal />
       </div>
     )
   }
