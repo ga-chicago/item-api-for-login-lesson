@@ -1,0 +1,11 @@
+.Edit-Modal-Closed {
+  display: none;
+}
+.Edit-Modal-Open {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background-color: pink;
+  transform: translate(-50%, -50%);
+}

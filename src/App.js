@@ -9,7 +9,9 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      items: []
+      items: [],
+      modalIsOpen: false,
+      editingItem: ''
     }
   }
   componentDidMount = () => {
@@ -62,12 +64,21 @@ class App extends Component {
     // need to make another request
 
   }
+
+  openModal = (e) => {
+    const itemId = e.currentTarget.previousSibling.id
+    this.setState({
+      modalIsOpen: true,
+      editingItem: itemId
+    })
+  }
+
   render() {
     return (
       <div className="App">
-        <ItemList items={this.state.items} deleteItem={this.deleteItem} />
+        <ItemList items={this.state.items} deleteItem={this.deleteItem} openModal={this.openModal} />
         <CreateItem addItem={this.addItem} />
-        <EditModal />
+        <EditModal modalIsOpen={this.state.modalIsOpen} />
       </div>
     )
   }

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import './style.css';
 
 export default class EditModal extends Component {
   render() {
+    const cssClass = this.props.modalIsOpen ? 'Edit-Modal-Open' : 'Edit-Modal-Closed';
     return(
-      <div>
+      <div className={cssClass}>
         <input type="text" />
-        <button>Edit</button>
+        <button>Update</button>
       </div>
     )
   }
