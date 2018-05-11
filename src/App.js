@@ -4,6 +4,7 @@ import './App.css';
 import ItemList from './ItemList';
 import CreateItem from './CreateItem';
 import EditModal from './EditModal';
+import LoginRegister from './LoginRegister';
 
 class App extends Component {
   constructor() {
@@ -11,7 +12,8 @@ class App extends Component {
     this.state = {
       items: [],
       modalIsOpen: false,
-      editingItem: ''
+      editingItem: '',
+      loggedIn: false
     }
   }
   componentDidMount = () => {
@@ -95,9 +97,14 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ItemList items={this.state.items} deleteItem={this.deleteItem} openModal={this.openModal} />
-        <CreateItem addItem={this.addItem} />
-        <EditModal modalIsOpen={this.state.modalIsOpen} editingItem={this.state.editingItem} editItem={this.editItem} />
+        { this.state.loggedIn ?
+          <div>
+            <ItemList items={this.state.items} deleteItem={this.deleteItem} openModal={this.openModal} />
+            <CreateItem addItem={this.addItem} />
+            <EditModal modalIsOpen={this.state.modalIsOpen} editingItem={this.state.editingItem} editItem={this.editItem} />
+          </div>
+          : <LoginRegister />
+        }
       </div>
     )
   }
