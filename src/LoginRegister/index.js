@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import './style.css'
 
 class LoginRegister extends Component {
   constructor() {
@@ -7,7 +7,8 @@ class LoginRegister extends Component {
 
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      registering: false
     }
 
   }
@@ -18,18 +19,33 @@ class LoginRegister extends Component {
     else this.setState({ password: e.currentTarget.value })
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = (e) => { console.log("handleSubmit in LoginRegister")
     e.preventDefault();
-    this.props.doRegister(this.state.username, this.state.password)
+    if(this.state.registering) this.props.doRegister(this.state.username, this.state.password)
+    else this.props.doLogin(this.state.username, this.state.password)
+  }
+
+  registration = () => {
+    this.setState({
+      registering: true
+    })
+  }
+  loggingIn = () => {
+    this.setState({
+      registering: false
+    })
   }
 
   render() {
     return(
-      <form onSubmit={this.handleSubmit}>
-        <input type="text" name="username" placeholder="username" onChange={this.handleInput} />
-        <input type="password" name="password" placeholder="password" onChange={this.handleInput} />
-        <input type="submit" />
-      </form>
+      <div>
+        <p><span className={this.state.registering ? "current" : null} onClick={this.registration}>Register</span> • <span className={this.state.registering ? null : "current"} onClick={this.loggingIn}>Login</span></p>
+        <form onSubmit={this.handleSubmit}>
+          <input type="text" name="username" placeholder={this.state.registering ? "desired username" : "username"} onChange={this.handleInput} /><br />
+          <input type="password" name="password" placeholder="password" onChange={this.handleInput} /><br />
+          <input type="submit" />
+        </form>
+      </div>
     )
   }
 

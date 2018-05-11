@@ -94,6 +94,12 @@ class App extends Component {
     this.setState(state);
 
   }
+  doRegister = (user, pass) => {
+    console.log("you are trying to register")
+  }
+  doLogin = (user, pass) => {
+    console.log("you are trying to login")
+  }
   render() {
     return (
       <div className="App">
@@ -103,7 +109,7 @@ class App extends Component {
             <CreateItem addItem={this.addItem} />
             <EditModal modalIsOpen={this.state.modalIsOpen} editingItem={this.state.editingItem} editItem={this.editItem} />
           </div>
-          : <LoginRegister />
+          : <LoginRegister doRegister={this.doRegister} doLogin={this.doLogin} />
         }
       </div>
     )
