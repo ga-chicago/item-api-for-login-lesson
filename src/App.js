@@ -13,7 +13,8 @@ class App extends Component {
       items: [],
       modalIsOpen: false,
       editingItem: '',
-      loggedIn: false
+      loggedIn: false,
+      loginError: ''
     }
   }
   componentDidMount = () => {
@@ -96,9 +97,31 @@ class App extends Component {
   }
   doRegister = (user, pass) => {
     console.log("you are trying to register")
+
   }
-  doLogin = (user, pass) => {
+  doLogin = async (user, pass) => {
     console.log("you are trying to login")
+    const resolvedLoginResponsePromise = await fetch('http://localhost:9292/user/login', {
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify({
+        username: user,
+        password: pass
+      })
+    });
+    const parsedLoginResponse = await resolvedLoginResponsePromise.json();
+    console.log("here's what happened when you tried to log in; parsedLoginResponse in doLogin in App:");
+    console.log(parsedLoginResponse)
+    if(parsedLoginResponse.success) {
+      this.setState({
+        loggedIn: true
+      })
+    } else {
+      this.setState({
+        loginError: parsedLoginResponse.message
+      })
+    }
+
   }
   render() {
     return (
@@ -109,7 +132,7 @@ class App extends Component {
             <CreateItem addItem={this.addItem} />
             <EditModal modalIsOpen={this.state.modalIsOpen} editingItem={this.state.editingItem} editItem={this.editItem} />
           </div>
-          : <LoginRegister doRegister={this.doRegister} doLogin={this.doLogin} />
+          : <LoginRegister doRegister={this.doRegister} doLogin={this.doLogin} loginError={this.state.loginError}/>
         }
       </div>
     )
