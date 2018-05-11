@@ -31,7 +31,9 @@ class App extends Component {
 
   }
   getItems = async () => {
-    const itemsJson = await fetch('http://localhost:9292/items');
+    const itemsJson = await fetch('http://localhost:9292/items', {
+      credentials: 'include'
+    });
     const items = await itemsJson.json();
     return items;
   }
