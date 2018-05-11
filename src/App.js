@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-// import logo from './logo.svg';
 import './App.css';
 import ItemList from './ItemList';
 import CreateItem from './CreateItem';
 import EditModal from './EditModal';
+import LoginRegister from './LoginRegister'
 
 class App extends Component {
   constructor() {
@@ -11,10 +11,19 @@ class App extends Component {
     this.state = {
       items: [],
       modalIsOpen: false,
-      editingItem: ''
+      editingItem: '',
+      loggedIn: false,
+      userId: null,
+      username: ''
     }
   }
+
   componentDidMount = () => {
+
+
+  }
+
+  doItemGet = () => {
     this.getItems()
       .then((response) => {
         console.log(response)
@@ -25,13 +34,16 @@ class App extends Component {
       .catch((err) => {
         console.error(err)
       })
-
   }
+
   getItems = async () => {
-    const itemsJson = await fetch('http://localhost:9292/items');
+    const itemsJson = await fetch('http://localhost:9292/items',{
+      credentials: 'include'
+    });
     const items = await itemsJson.json();
     return items;
   }
+
   addItem = async (itemTitle) => {
     console.log(itemTitle)
     const items = await fetch('http://localhost:9292/items', {
@@ -46,6 +58,7 @@ class App extends Component {
     })
     return itemsParsed;
   }
+
   deleteItem = async (e) => { 
     e.preventDefault();
     console.log(e.currentTarget)
@@ -66,20 +79,68 @@ class App extends Component {
   }
 
   openModal = (e) => {
+    console.log("openModalCalled")
     const itemId = e.currentTarget.previousSibling.id
+    console.log("itemId ", itemId)
+    const itemWeAreEditing = this.state.items.find(item => item.id == itemId)
+    console.log(itemWeAreEditing, " itemWeAreEditing")
     this.setState({
       modalIsOpen: true,
-      editingItem: itemId
+      editingItem: itemWeAreEditing
     })
+  }
+
+  editItem = async (titleValue, id) => {
+    const item = await fetch('http://localhost:9292/items/' + id, {
+      method: 'PATCH',
+      body: JSON.stringify({ title: titleValue })
+    })
+    
+    const response = await item.json();
+
+    const editedItemIndex = this.state.items.findIndex(item=>item.id == response.updated_item.id)
+
+    const state = this.state;
+    state.items[editedItemIndex] = response.updated_item;
+    state.modalIsOpen = false;
+    this.setState(state);
+
+  }
+
+  doRegister = async (user, pass) => {
+    const loginResponse = await fetch('http://localhost:9292/user/login', {
+      method: 'POST',
+      credentials: 'include', 
+      body: JSON.stringify({
+        username: user,
+        password: pass
+      })
+    })
+    const parsedLoginResponse = await loginResponse.json();
+    console.log(parsedLoginResponse);
+    if(parsedLoginResponse.success) {
+      this.setState({
+        loggedIn: true,
+        username: user.username,
+        userId: user.id
+      })
+      this.doItemGet();
+    }
   }
 
   render() {
     return (
-      <div className="App">
-        <ItemList items={this.state.items} deleteItem={this.deleteItem} openModal={this.openModal} />
-        <CreateItem addItem={this.addItem} />
-        <EditModal modalIsOpen={this.state.modalIsOpen} />
-      </div>
+        <div className="App">
+          { this.state.loggedIn ?
+            <div>
+              <ItemList items={this.state.items} deleteItem={this.deleteItem} openModal={this.openModal} />
+              <CreateItem addItem={this.addItem} />
+              <EditModal modalIsOpen={this.state.modalIsOpen} editingItem={this.state.editingItem} editItem={this.editItem} />
+            </div>
+            : <LoginRegister doRegister={this.doRegister} doLogin={this.doLogin} /> 
+          }
+        </div> 
+      
     )
   }
 }

@@ -24,7 +24,7 @@ class CreateItem extends Component {
   render() {
     return(
       <form onSubmit={this.handleSubmit}>
-        <input type="text" name="title" onChange={this.updateItem} />
+        <input type="text" name="title" value={this.state.title} placehoder="enter new item here" onChange={this.updateItem} />
         <input type="submit" />
       </form>
     )
