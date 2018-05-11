@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+// import logo from './logo.svg';
 import './App.css';
 import ItemList from './ItemList';
 import CreateItem from './CreateItem';
 import EditModal from './EditModal';
-import LoginRegister from './LoginRegister'
 
 class App extends Component {
   constructor() {
@@ -11,19 +11,10 @@ class App extends Component {
     this.state = {
       items: [],
       modalIsOpen: false,
-      editingItem: '',
-      loggedIn: false,
-      userId: null,
-      username: ''
+      editingItem: ''
     }
   }
-
   componentDidMount = () => {
-
-
-  }
-
-  doItemGet = () => {
     this.getItems()
       .then((response) => {
         console.log(response)
@@ -34,16 +25,13 @@ class App extends Component {
       .catch((err) => {
         console.error(err)
       })
-  }
 
+  }
   getItems = async () => {
-    const itemsJson = await fetch('http://localhost:9292/items',{
-      credentials: 'include'
-    });
+    const itemsJson = await fetch('http://localhost:9292/items');
     const items = await itemsJson.json();
     return items;
   }
-
   addItem = async (itemTitle) => {
     console.log(itemTitle)
     const items = await fetch('http://localhost:9292/items', {
@@ -58,7 +46,6 @@ class App extends Component {
     })
     return itemsParsed;
   }
-
   deleteItem = async (e) => { 
     e.preventDefault();
     console.log(e.currentTarget)
@@ -89,7 +76,6 @@ class App extends Component {
       editingItem: itemWeAreEditing
     })
   }
-
   editItem = async (titleValue, id) => {
     const item = await fetch('http://localhost:9292/items/' + id, {
       method: 'PATCH',
@@ -106,41 +92,13 @@ class App extends Component {
     this.setState(state);
 
   }
-
-  doRegister = async (user, pass) => {
-    const loginResponse = await fetch('http://localhost:9292/user/login', {
-      method: 'POST',
-      credentials: 'include', 
-      body: JSON.stringify({
-        username: user,
-        password: pass
-      })
-    })
-    const parsedLoginResponse = await loginResponse.json();
-    console.log(parsedLoginResponse);
-    if(parsedLoginResponse.success) {
-      this.setState({
-        loggedIn: true,
-        username: user.username,
-        userId: user.id
-      })
-      this.doItemGet();
-    }
-  }
-
   render() {
     return (
-        <div className="App">
-          { this.state.loggedIn ?
-            <div>
-              <ItemList items={this.state.items} deleteItem={this.deleteItem} openModal={this.openModal} />
-              <CreateItem addItem={this.addItem} />
-              <EditModal modalIsOpen={this.state.modalIsOpen} editingItem={this.state.editingItem} editItem={this.editItem} />
-            </div>
-            : <LoginRegister doRegister={this.doRegister} doLogin={this.doLogin} /> 
-          }
-        </div> 
-      
+      <div className="App">
+        <ItemList items={this.state.items} deleteItem={this.deleteItem} openModal={this.openModal} />
+        <CreateItem addItem={this.addItem} />
+        <EditModal modalIsOpen={this.state.modalIsOpen} editingItem={this.state.editingItem} editItem={this.editItem} />
+      </div>
     )
   }
 }
